@@ -1,0 +1,110 @@
+# sftp接收文件时的filepath是要获取的文件的绝对路径(含文件名)
+# sftp发送文件时的filepath是要发送到远端的文件绝对路径(含文件名)
+
+## 测试sftp获取文件同步接口
+POST http://localhost:8080/sftp-get/sync
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/c/Users/dWX5323489/test.log
+--WebAppBoundary--
+
+###
+
+## 测试sftp获取文件异步接口
+POST http://localhost:8080/sftp-get/async
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+Cb_Target: http://localhost:8080/common
+Cb_Method: POST
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/c/Users/dWX5323489/test.log
+--WebAppBoundary--
+
+###
+
+## 测试sftp获取文件异步接口
+POST http://localhost:8080/sftp-get/job
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+Spec: @every 10s
+Cb_Target: http://localhost:8080/common
+Cb_Method: POST
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/c/Users/dWX5323489/test.log
+--WebAppBoundary--
+
+###
+
+## 测试sftp发送文件同步接口
+POST http://localhost:8080/sftp-send/sync
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/d/test.jpg
+--WebAppBoundary
+Content-Disposition: form-data; name="filecontent" ; filename="test.log"
+
+< C:\Users\dWX5323489\test.jpg
+--WebAppBoundary--
+
+###
+
+## 测试sftp发送文件异步接口
+POST http://localhost:8080/sftp-send/async
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+Cb_Target: http://localhost:8080/common
+Cb_Method: POST
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/d/test2.jpg
+--WebAppBoundary
+Content-Disposition: form-data; name="filecontent" ; filename="test.log"
+
+< C:\Users\dWX5323489\test.jpg
+
+###
+
+## 测试sftp发送文件任务接口
+POST http://localhost:8080/sftp-send/job
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+Spec: @every 10s
+Cb_Target: http://localhost:8080/common
+Cb_Method: POST
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/d/test5.jpg
+--WebAppBoundary
+Content-Disposition: form-data; name="filecontent" ; filename="test.log"
+
+< C:\Users\dWX5323489\test.jpg

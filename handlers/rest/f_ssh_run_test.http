@@ -1,0 +1,13 @@
+## snmp-bulkget同步接口测试
+POST http://localhost:8080/ssh-run/sync
+Content-Type: application/json
+Target: 127.0.0.1:22
+Username: daipengyuan
+Password: mypassword
+
+
+[
+  "ls",
+  "pwd"
+]
+###

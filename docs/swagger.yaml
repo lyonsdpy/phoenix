@@ -1,0 +1,1138 @@
+basePath: /v1
+definitions:
+  errno.Err:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  gosnmp.SnmpPDU:
+    properties:
+      name:
+        type: string
+      type:
+        type: Asn1BER
+      value:
+        type: object
+    type: object
+  mod.ICMPRequest:
+    properties:
+      count:
+        type: integer
+      max_rtt:
+        type: integer
+      size:
+        type: integer
+      use_udp:
+        type: boolean
+    type: object
+  mod.ICMPResponse:
+    properties:
+      avg_rtt:
+        type: string
+      max_rtt:
+        type: string
+      min_rtt:
+        type: string
+      packet_loss:
+        type: number
+      packets_recv:
+        type: integer
+      packets_sent:
+        type: integer
+      remote_addr:
+        type: string
+      remote_ip_addr:
+        type: string
+      rtts:
+        items:
+          type: string
+        type: array
+      std_dev_rtt:
+        type: string
+    type: object
+host: 127.0.0.1:8080
+info:
+  contact:
+    email: lyonsdpy@163.com
+    name: 代澎源
+    url: https://github.com/lyonsdpy/phoenix
+  description: |-
+    可用于监控采集,网管信息获取的统一入口.
+    后续计划支持prometheus，grpc，etcd.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: phoenix采集agent
+  version: 1.0.0
+paths:
+  /encrypt_word:
+    post:
+      consumes:
+      - application/json
+      description: 通常用户获取密码的加密形式，避免在网络中传输密文
+      parameters:
+      - description: 明文信息
+        in: body
+        name: plaintext
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 密文信息
+          schema:
+            type: string
+      tags:
+      - Common
+  /icmp/async:
+    post:
+      consumes:
+      - application/json
+      description: 请求时的返回时间等于count*max_rtt
+      parameters:
+      - description: ICMP的请求body
+        in: body
+        name: icmp_req
+        required: true
+        schema:
+          $ref: '#/definitions/mod.ICMPRequest'
+      - default: www.baidu.com
+        description: ICMP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"message"："请求成功","data":{"taskid":"93363008-23fc-11eb-a41a-f875a41832dc"}}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - ICMP
+  /icmp/job:
+    post:
+      consumes:
+      - application/json
+      description: 任务的执行间隔不要小于count*max_rtt的值
+      parameters:
+      - description: ICMP的请求body
+        in: body
+        name: icmp_req
+        required: true
+        schema:
+          $ref: '#/definitions/mod.ICMPRequest'
+      - default: www.baidu.com
+        description: ICMP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 任务时间间隔
+        enum:
+        - '@every 5s'
+        - '@every 10s'
+        - '@hourly'
+        - /5 * * * *
+        in: header
+        name: spec
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"message"："请求成功","data":{"taskid":"93363008-23fc-11eb-a41a-f875a41832dc"}}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - ICMP
+  /icmp/sync:
+    post:
+      consumes:
+      - application/json
+      description: 请求时的返回时间等于count*max_rtt
+      parameters:
+      - description: ICMP的请求body
+        in: body
+        name: icmp_req
+        required: true
+        schema:
+          $ref: '#/definitions/mod.ICMPRequest'
+      - default: www.baidu.com
+        description: ICMP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ICMP返回信息
+          schema:
+            $ref: '#/definitions/mod.ICMPResponse'
+      tags:
+      - ICMP
+  /scp-get/async:
+    post:
+      consumes:
+      - multipart/form-data
+      description: scp从远端获取文件
+      parameters:
+      - default: 127.0.0.1:22
+        description: SCP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{"code":200,"message"："请求成功","data":{"taskid":"93363008-23fc-11eb-a41a-f875a41832dc"}}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SCP
+  /scp-get/job:
+    post:
+      consumes:
+      - multipart/form-data
+      description: scp从远端获取文件，通常用于定时备份配置文件等
+      parameters:
+      - default: 127.0.0.1:22
+        description: SCP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      - description: 任务时间间隔
+        enum:
+        - '@every 5s'
+        - '@every 10s'
+        - '@hourly'
+        - /5 * * * *
+        in: header
+        name: spec
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{"code":200,"message"："请求成功","data":{"taskid":"93363008-23fc-11eb-a41a-f875a41832dc"}}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SCP
+  /scp-get/sync:
+    post:
+      consumes:
+      - multipart/form-data
+      description: scp从远端获取文件，返回文件的二进制
+      parameters:
+      - default: 127.0.0.1:22
+        description: SCP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 远端文件二进制
+          schema:
+            type: string
+      tags:
+      - SCP
+  /scp-send/async:
+    post:
+      consumes:
+      - multipart/form-data
+      description: scp将文件保存到远端
+      parameters:
+      - default: 127.0.0.1:22
+        description: SCP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      - description: 远端文件内容
+        in: formData
+        name: filecontent
+        required: true
+        type: file
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{"code":200,"message"："请求成功","data":{"taskid":"93363008-23fc-11eb-a41a-f875a41832dc"}}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SCP
+  /scp-send/job:
+    post:
+      consumes:
+      - multipart/form-data
+      description: scp将文件保存到远端
+      parameters:
+      - default: 127.0.0.1:22
+        description: SCP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      - description: 远端文件内容
+        in: formData
+        name: filecontent
+        required: true
+        type: file
+      - description: 任务时间间隔
+        enum:
+        - '@every 5s'
+        - '@every 10s'
+        - '@hourly'
+        - /5 * * * *
+        in: header
+        name: spec
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{"code":200,"message"："请求成功","data":{"taskid":"93363008-23fc-11eb-a41a-f875a41832dc"}}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SCP
+  /scp-send/sync:
+    post:
+      consumes:
+      - multipart/form-data
+      description: scp将文件保存到远端
+      parameters:
+      - default: 127.0.0.1:22
+        description: SCP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      - description: 远端文件内容
+        in: formData
+        name: filecontent
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"message":"请求成功"}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SCP
+  /sftp-get/async:
+    post:
+      consumes:
+      - multipart/form-data
+      description: sftp从远端获取文件
+      parameters:
+      - default: 127.0.0.1:22
+        description: sftp请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"message"："请求成功","data":{"taskid":"93363008-23fc-11eb-a41a-f875a41832dc"}}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SFTP
+  /sftp-get/job:
+    post:
+      consumes:
+      - multipart/form-data
+      description: sftp从远端获取文件，通常用于定时备份配置文件等
+      parameters:
+      - default: 127.0.0.1:22
+        description: SFTP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      - description: 任务时间间隔
+        enum:
+        - '@every 5s'
+        - '@every 10s'
+        - '@hourly'
+        - /5 * * * *
+        in: header
+        name: spec
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"message"："请求成功","data":{"taskid":"93363008-23fc-11eb-a41a-f875a41832dc"}}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SFTP
+  /sftp-get/sync:
+    post:
+      consumes:
+      - multipart/form-data
+      description: sftp从远端获取文件，返回文件的二进制
+      parameters:
+      - default: 127.0.0.1:22
+        description: sftp请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: 远端文件二进制
+          schema:
+            type: string
+      tags:
+      - SFTP
+  /sftp-send/async:
+    post:
+      consumes:
+      - multipart/form-data
+      description: sftp将文件保存到远端
+      parameters:
+      - default: 127.0.0.1:22
+        description: SFTP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      - description: 远端文件内容
+        in: formData
+        name: filecontent
+        required: true
+        type: file
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"message"："请求成功","data":{"taskid":"93363008-23fc-11eb-a41a-f875a41832dc"}}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SFTP
+  /sftp-send/job:
+    post:
+      consumes:
+      - multipart/form-data
+      description: sftp将文件保存到远端
+      parameters:
+      - default: 127.0.0.1:22
+        description: SCP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      - description: 远端文件内容
+        in: formData
+        name: filecontent
+        required: true
+        type: file
+      - description: 任务时间间隔
+        enum:
+        - '@every 5s'
+        - '@every 10s'
+        - '@hourly'
+        - /5 * * * *
+        in: header
+        name: spec
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"message"："请求成功","data":{"taskid":"93363008-23fc-11eb-a41a-f875a41832dc"}}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SFTP
+  /sftp-send/sync:
+    post:
+      consumes:
+      - multipart/form-data
+      description: sftp将文件保存到远端
+      parameters:
+      - default: 127.0.0.1:22
+        description: SFTP请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 远端的文件路径(含文件名)
+        in: formData
+        name: filepath
+        required: true
+        type: string
+      - description: 远端文件内容
+        in: formData
+        name: filecontent
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"message":"请求成功"}'
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SFTP
+  /snetconf-cap/async:
+    post:
+      description: SNetconf via ssh获取能力集的异步交互
+      parameters:
+      - default: 127.0.0.1:830
+        description: snetconf请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      produces:
+      - text/xml
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SNetconf
+  /snetconf-cap/job:
+    post:
+      description: SNetconf via ssh获取能力集的异步交互
+      parameters:
+      - default: 127.0.0.1:830
+        description: snetconf请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 任务时间间隔
+        enum:
+        - '@every 5s'
+        - '@every 10s'
+        - '@hourly'
+        - /5 * * * *
+        in: header
+        name: spec
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      produces:
+      - text/xml
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SNetconf
+  /snetconf-cap/sync:
+    post:
+      description: netconf via ssh的交互,获取能力集
+      parameters:
+      - default: 127.0.0.1:830
+        description: snetconf请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      produces:
+      - text/xml
+      responses:
+        "200":
+          description: 远端xml
+          schema:
+            type: string
+      tags:
+      - SNetconf
+  /snetconf/async:
+    post:
+      consumes:
+      - text/xml
+      description: SNetconf via ssh的异步交互
+      parameters:
+      - default: 127.0.0.1:830
+        description: snetconf请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      - description: netconf请求xml
+        in: body
+        name: req_xml
+        required: true
+        schema:
+          type: string
+      produces:
+      - text/xml
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SNetconf
+  /snetconf/job:
+    post:
+      consumes:
+      - text/xml
+      description: SNetconf via ssh的异步交互
+      parameters:
+      - default: 127.0.0.1:830
+        description: snetconf请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 任务时间间隔
+        enum:
+        - '@every 5s'
+        - '@every 10s'
+        - '@hourly'
+        - /5 * * * *
+        in: header
+        name: spec
+        required: true
+        type: string
+      - default: http://127.0.0.1:8080/v1/common
+        description: http回调目标
+        in: header
+        name: cb_target
+        required: true
+        type: string
+      - description: http回调方法
+        enum:
+        - POST
+        in: header
+        name: cb_method
+        required: true
+        type: string
+      - description: netconf请求xml
+        in: body
+        name: req_xml
+        required: true
+        schema:
+          type: string
+      produces:
+      - text/xml
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/errno.Err'
+      tags:
+      - SNetconf
+  /snetconf/sync:
+    post:
+      consumes:
+      - text/xml
+      description: netconf via ssh的交互
+      parameters:
+      - default: 127.0.0.1:830
+        description: snetconf请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 用户名
+        in: header
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: netconf请求xml
+        in: body
+        name: req_xml
+        required: true
+        schema:
+          type: string
+      produces:
+      - text/xml
+      responses:
+        "200":
+          description: 远端xml
+          schema:
+            type: string
+      tags:
+      - SNetconf
+  /snmp-bulkget/sync:
+    post:
+      consumes:
+      - application/json
+      description: SNMP的交互
+      parameters:
+      - default: 127.0.0.1:161
+        description: snmp请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 团体字
+        in: header
+        name: community
+        required: true
+        type: string
+      - description: OID列表
+        in: body
+        name: oid_list
+        required: true
+        schema:
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{1:"integer",2:"bitstring"...}'
+          schema:
+            items:
+              $ref: '#/definitions/gosnmp.SnmpPDU'
+            type: array
+      tags:
+      - SNMP
+  /snmp-typelist:
+    post:
+      consumes:
+      - application/json
+      description: SNMP的交互
+      parameters:
+      - default: 127.0.0.1:161
+        description: snmp请求目标
+        in: header
+        name: target
+        required: true
+        type: string
+      - description: 团体字
+        in: header
+        name: community
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{1:"integer",2:"bitstring"...}'
+          schema:
+            type: string
+      tags:
+      - SNMP
+swagger: "2.0"

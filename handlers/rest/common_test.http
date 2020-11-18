@@ -1,0 +1,44 @@
+## 测试文字加密
+POST http://localhost:8080/v1/encrypt_word
+
+dddd
+###
+
+## 测试发送json数据
+POST http://localhost:8080/common
+Content-Type: application/json
+
+{
+  "helloworld": "helloworld"
+}
+
+###
+# 测试common接口，发送multi-part包含值和文件
+POST http://localhost:8080/common
+My-Header: 1
+My-Header: 2
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="f1";
+
+value-f1,
+--WebAppBoundary
+Content-Disposition: form-data; name="f2"; filename="httptest.txt";
+
+< D:\httptest.txt
+--WebAppBoundary
+Content-Disposition: form-data; name="f3"; filename="httptest2.txt";
+
+Value-f3
+--WebAppBoundary
+Content-Disposition: form-data; name="f1";
+
+value-f2
+--WebAppBoundary
+Content-Disposition: form-data; name="f4";
+
+value=F1&va=F2
+--WebAppBoundary--
+###
+

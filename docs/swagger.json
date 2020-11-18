@@ -1,0 +1,1655 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "可用于监控采集,网管信息获取的统一入口.\n后续计划支持prometheus，grpc，etcd.",
+        "title": "phoenix采集agent",
+        "contact": {
+            "name": "代澎源",
+            "url": "https://github.com/lyonsdpy/phoenix",
+            "email": "lyonsdpy@163.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "host": "127.0.0.1:8080",
+    "basePath": "/v1",
+    "paths": {
+        "/encrypt_word": {
+            "post": {
+                "description": "通常用户获取密码的加密形式，避免在网络中传输密文",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Common"
+                ],
+                "parameters": [
+                    {
+                        "description": "明文信息",
+                        "name": "plaintext",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "密文信息",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/icmp/async": {
+            "post": {
+                "description": "请求时的返回时间等于count*max_rtt",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ICMP"
+                ],
+                "parameters": [
+                    {
+                        "description": "ICMP的请求body",
+                        "name": "icmp_req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/mod.ICMPRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "default": "www.baidu.com",
+                        "description": "ICMP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\"：\"请求成功\",\"data\":{\"taskid\":\"93363008-23fc-11eb-a41a-f875a41832dc\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/icmp/job": {
+            "post": {
+                "description": "任务的执行间隔不要小于count*max_rtt的值",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ICMP"
+                ],
+                "parameters": [
+                    {
+                        "description": "ICMP的请求body",
+                        "name": "icmp_req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/mod.ICMPRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "default": "www.baidu.com",
+                        "description": "ICMP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "@every 5s",
+                            "@every 10s",
+                            "@hourly",
+                            "/5 * * * *"
+                        ],
+                        "type": "string",
+                        "description": "任务时间间隔",
+                        "name": "spec",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\"：\"请求成功\",\"data\":{\"taskid\":\"93363008-23fc-11eb-a41a-f875a41832dc\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/icmp/sync": {
+            "post": {
+                "description": "请求时的返回时间等于count*max_rtt",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ICMP"
+                ],
+                "parameters": [
+                    {
+                        "description": "ICMP的请求body",
+                        "name": "icmp_req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/mod.ICMPRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "default": "www.baidu.com",
+                        "description": "ICMP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ICMP返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/mod.ICMPResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/scp-get/async": {
+            "post": {
+                "description": "scp从远端获取文件",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "SCP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "SCP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\"：\"请求成功\",\"data\":{\"taskid\":\"93363008-23fc-11eb-a41a-f875a41832dc\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/scp-get/job": {
+            "post": {
+                "description": "scp从远端获取文件，通常用于定时备份配置文件等",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "SCP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "SCP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "@every 5s",
+                            "@every 10s",
+                            "@hourly",
+                            "/5 * * * *"
+                        ],
+                        "type": "string",
+                        "description": "任务时间间隔",
+                        "name": "spec",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\"：\"请求成功\",\"data\":{\"taskid\":\"93363008-23fc-11eb-a41a-f875a41832dc\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/scp-get/sync": {
+            "post": {
+                "description": "scp从远端获取文件，返回文件的二进制",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "SCP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "SCP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "远端文件二进制",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/scp-send/async": {
+            "post": {
+                "description": "scp将文件保存到远端",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "SCP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "SCP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "远端文件内容",
+                        "name": "filecontent",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\"：\"请求成功\",\"data\":{\"taskid\":\"93363008-23fc-11eb-a41a-f875a41832dc\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/scp-send/job": {
+            "post": {
+                "description": "scp将文件保存到远端",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "SCP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "SCP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "远端文件内容",
+                        "name": "filecontent",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "@every 5s",
+                            "@every 10s",
+                            "@hourly",
+                            "/5 * * * *"
+                        ],
+                        "type": "string",
+                        "description": "任务时间间隔",
+                        "name": "spec",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\"：\"请求成功\",\"data\":{\"taskid\":\"93363008-23fc-11eb-a41a-f875a41832dc\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/scp-send/sync": {
+            "post": {
+                "description": "scp将文件保存到远端",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SCP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "SCP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "远端文件内容",
+                        "name": "filecontent",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\":\"请求成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/sftp-get/async": {
+            "post": {
+                "description": "sftp从远端获取文件",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SFTP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "sftp请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\"：\"请求成功\",\"data\":{\"taskid\":\"93363008-23fc-11eb-a41a-f875a41832dc\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/sftp-get/job": {
+            "post": {
+                "description": "sftp从远端获取文件，通常用于定时备份配置文件等",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SFTP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "SFTP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "@every 5s",
+                            "@every 10s",
+                            "@hourly",
+                            "/5 * * * *"
+                        ],
+                        "type": "string",
+                        "description": "任务时间间隔",
+                        "name": "spec",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\"：\"请求成功\",\"data\":{\"taskid\":\"93363008-23fc-11eb-a41a-f875a41832dc\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/sftp-get/sync": {
+            "post": {
+                "description": "sftp从远端获取文件，返回文件的二进制",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "SFTP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "sftp请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "远端文件二进制",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/sftp-send/async": {
+            "post": {
+                "description": "sftp将文件保存到远端",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SFTP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "SFTP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "远端文件内容",
+                        "name": "filecontent",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\"：\"请求成功\",\"data\":{\"taskid\":\"93363008-23fc-11eb-a41a-f875a41832dc\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/sftp-send/job": {
+            "post": {
+                "description": "sftp将文件保存到远端",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SFTP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "SCP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "远端文件内容",
+                        "name": "filecontent",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "@every 5s",
+                            "@every 10s",
+                            "@hourly",
+                            "/5 * * * *"
+                        ],
+                        "type": "string",
+                        "description": "任务时间间隔",
+                        "name": "spec",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\"：\"请求成功\",\"data\":{\"taskid\":\"93363008-23fc-11eb-a41a-f875a41832dc\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/sftp-send/sync": {
+            "post": {
+                "description": "sftp将文件保存到远端",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SFTP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:22",
+                        "description": "SFTP请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "远端的文件路径(含文件名)",
+                        "name": "filepath",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "远端文件内容",
+                        "name": "filecontent",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"message\":\"请求成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/snetconf-cap/async": {
+            "post": {
+                "description": "SNetconf via ssh获取能力集的异步交互",
+                "produces": [
+                    "text/xml"
+                ],
+                "tags": [
+                    "SNetconf"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:830",
+                        "description": "snetconf请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/snetconf-cap/job": {
+            "post": {
+                "description": "SNetconf via ssh获取能力集的异步交互",
+                "produces": [
+                    "text/xml"
+                ],
+                "tags": [
+                    "SNetconf"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:830",
+                        "description": "snetconf请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "@every 5s",
+                            "@every 10s",
+                            "@hourly",
+                            "/5 * * * *"
+                        ],
+                        "type": "string",
+                        "description": "任务时间间隔",
+                        "name": "spec",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/snetconf-cap/sync": {
+            "post": {
+                "description": "netconf via ssh的交互,获取能力集",
+                "produces": [
+                    "text/xml"
+                ],
+                "tags": [
+                    "SNetconf"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:830",
+                        "description": "snetconf请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "远端xml",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/snetconf/async": {
+            "post": {
+                "description": "SNetconf via ssh的异步交互",
+                "consumes": [
+                    "text/xml"
+                ],
+                "produces": [
+                    "text/xml"
+                ],
+                "tags": [
+                    "SNetconf"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:830",
+                        "description": "snetconf请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "netconf请求xml",
+                        "name": "req_xml",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/snetconf/job": {
+            "post": {
+                "description": "SNetconf via ssh的异步交互",
+                "consumes": [
+                    "text/xml"
+                ],
+                "produces": [
+                    "text/xml"
+                ],
+                "tags": [
+                    "SNetconf"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:830",
+                        "description": "snetconf请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "@every 5s",
+                            "@every 10s",
+                            "@hourly",
+                            "/5 * * * *"
+                        ],
+                        "type": "string",
+                        "description": "任务时间间隔",
+                        "name": "spec",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "http://127.0.0.1:8080/v1/common",
+                        "description": "http回调目标",
+                        "name": "cb_target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "POST"
+                        ],
+                        "type": "string",
+                        "description": "http回调方法",
+                        "name": "cb_method",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "netconf请求xml",
+                        "name": "req_xml",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/errno.Err"
+                        }
+                    }
+                }
+            }
+        },
+        "/snetconf/sync": {
+            "post": {
+                "description": "netconf via ssh的交互",
+                "consumes": [
+                    "text/xml"
+                ],
+                "produces": [
+                    "text/xml"
+                ],
+                "tags": [
+                    "SNetconf"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:830",
+                        "description": "snetconf请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "netconf请求xml",
+                        "name": "req_xml",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "远端xml",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/snmp-bulkget/sync": {
+            "post": {
+                "description": "SNMP的交互",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SNMP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:161",
+                        "description": "snmp请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "团体字",
+                        "name": "community",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "OID列表",
+                        "name": "oid_list",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{1:\"integer\",2:\"bitstring\"...}",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/gosnmp.SnmpPDU"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/snmp-typelist": {
+            "post": {
+                "description": "SNMP的交互",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SNMP"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "127.0.0.1:161",
+                        "description": "snmp请求目标",
+                        "name": "target",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "团体字",
+                        "name": "community",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{1:\"integer\",2:\"bitstring\"...}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "errno.Err": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "gosnmp.SnmpPDU": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "Asn1BER"
+                },
+                "value": {
+                    "type": "object"
+                }
+            }
+        },
+        "mod.ICMPRequest": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "max_rtt": {
+                    "type": "integer"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "use_udp": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "mod.ICMPResponse": {
+            "type": "object",
+            "properties": {
+                "avg_rtt": {
+                    "type": "string"
+                },
+                "max_rtt": {
+                    "type": "string"
+                },
+                "min_rtt": {
+                    "type": "string"
+                },
+                "packet_loss": {
+                    "type": "number"
+                },
+                "packets_recv": {
+                    "type": "integer"
+                },
+                "packets_sent": {
+                    "type": "integer"
+                },
+                "remote_addr": {
+                    "type": "string"
+                },
+                "remote_ip_addr": {
+                    "type": "string"
+                },
+                "rtts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "std_dev_rtt": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

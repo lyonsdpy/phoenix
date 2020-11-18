@@ -1,0 +1,110 @@
+# scp接收文件时的filepath是要获取的文件的绝对路径(含文件名)
+# scp发送文件时的filepath是要发送到远端的文件绝对路径(含文件名)
+
+## 测试scp获取文件同步接口
+POST http://localhost:8080/scp-get/sync
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/c/Users/dWX5323489/test.log
+--WebAppBoundary--
+
+###
+
+## 测试scp获取文件异步接口
+POST http://localhost:8080/scp-get/async
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+Cb_Target: http://localhost:8080/common
+Cb_Method: POST
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/c/Users/dWX5323489/test.log
+--WebAppBoundary--
+
+###
+
+## 测试scp获取文件任务接口(定期备份配置文件)
+POST http://localhost:8080/scp-get/job
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Spec: @every 10s
+Username: root
+Password: mypassword
+Cb_Target: http://localhost:8080/common
+Cb_Method: POST
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/c/Users/dWX5323489/test.log
+--WebAppBoundary--
+
+###
+
+## 测试scp发送文件同步接口
+POST http://localhost:8080/scp-send/sync
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/d/test2.jpg
+--WebAppBoundary
+Content-Disposition: form-data; name="filecontent" ; filename="test.log"
+
+< C:\Users\dWX5323489\test.jpg
+--WebAppBoundary--
+
+###
+
+## 测试scp发送文件异步接口
+POST http://localhost:8080/scp-send/async
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: 04db8463cd757c2945a35a5f6ece81e2
+Cb_Target: http://localhost:8080/common
+Cb_Method: POST
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/d/test4.jpg
+--WebAppBoundary
+Content-Disposition: form-data; name="filecontent" ; filename="test.log"
+
+< C:\Users\dWX5323489\test.jpg
+
+###
+
+## 测试scp发送文件任务接口
+POST http://localhost:8080/scp-send/job
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+Spec: @every 10s
+Cb_Target: http://localhost:8080/common
+Cb_Method: POST
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filepath"
+
+/mnt/d/test5.jpg
+--WebAppBoundary
+Content-Disposition: form-data; name="filecontent" ; filename="test.log"
+
+< C:\Users\dWX5323489\test.jpg

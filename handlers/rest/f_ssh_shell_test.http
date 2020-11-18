@@ -1,0 +1,12 @@
+POST http://localhost:8080/ssh-shell/sync
+Content-Type: application/json
+Target: 127.0.0.1:22
+Username: root
+Password: mypassword
+
+
+[
+  "ls"
+]
+
+###

@@ -1,0 +1,46 @@
+# (测试时如果提示socket permission denied，可以使用use_udp=true试一试)
+# (ping操作的job采集间隔要大于count和max_rtt的乘机)
+
+## 测试icmp同步接口
+POST http://localhost:8080/icmp/sync
+Content-Type: application/json
+Target: www.baidu.com
+
+{
+  "size": 100,
+  "count": 1,
+  "max_rtt": 1000
+}
+
+###
+
+## 测试icmp异步接口
+POST http://localhost:8080/icmp/async
+Content-Type: application/json
+Target: www.baidu.com
+Comment: this is a ping test
+Cb_Target: http://localhost:8080/common
+Cb_Method: POST
+
+{
+  "size": 100,
+  "count": 4,
+  "max_rtt": 100
+}
+###
+
+## 测试icmp任务接口
+POST http://localhost:8080/icmp/job
+Content-Type: application/json
+Target: www.baidu.com
+Spec: @every 5s
+Comment: this is a ping test
+Cb_Target: http://localhost:8080/common
+Cb_Method: POST
+
+{
+  "size": 100,
+  "count": 4,
+  "max_rtt": 100
+}
+###
