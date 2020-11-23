@@ -17,7 +17,6 @@ import (
 
 var IcmpRoute = []mod.Route{
 	{Method: "POST", Path: "/icmp/sync", Handler: Icmp, Comment: "icmp同步请求接口"},
-	{Method: "POST", Path: "/icmp/sync", Handler: Icmp, Comment: "icmp同步请求接口"},
 	{Method: "POST", Path: "/icmp/async", Handler: IcmpAsync, Comment: "icmp异步"},
 	{Method: "POST", Path: "/icmp/job", Handler: IcmpJob, Comment: "icmp任务"},
 }
